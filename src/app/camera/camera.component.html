@@ -1,0 +1,94 @@
+<div class="form-container">
+    <h2>Reporte de Problema de Equipo</h2>
+    
+    <form [formGroup]="problemForm" (ngSubmit)="onSubmit()" class="problem-form">
+      <div class="form-group">
+        <label for="equipmentId">ID del Equipo</label>
+        <input 
+          type="text" 
+          id="equipmentId" 
+          formControlName="equipmentId" 
+          placeholder="Ingrese el ID del equipo"
+          [class.is-invalid]="formSubmitted && problemForm.get('equipmentId')?.invalid">
+        <div class="error-text" *ngIf="formSubmitted && problemForm.get('equipmentId')?.errors?.['required']">
+          El ID del equipo es obligatorio
+        </div>
+        <div class="error-text" *ngIf="formSubmitted && problemForm.get('equipmentId')?.errors?.['minlength']">
+          El ID debe tener al menos 3 caracteres
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="problemDescription">Descripción del Problema</label>
+        <textarea 
+          id="problemDescription" 
+          formControlName="problemDescription" 
+          placeholder="Describa el problema en detalle" 
+          rows="4"
+          [class.is-invalid]="formSubmitted && problemForm.get('problemDescription')?.invalid"></textarea>
+        <div class="error-text" *ngIf="formSubmitted && problemForm.get('problemDescription')?.errors?.['required']">
+          La descripción del problema es obligatoria
+        </div>
+        <div class="error-text" *ngIf="formSubmitted && problemForm.get('problemDescription')?.errors?.['minlength']">
+          La descripción debe tener al menos 10 caracteres
+        </div>
+      </div>
+      
+      <div class="camera-section">
+        <h3>Fotografía del Problema</h3>
+        
+        <div class="camera-container">
+          <img [src]="imgUrl" alt="Captured Image" class="captured-image" *ngIf="imgUrl && !showGallery">
+          <div class="placeholder" *ngIf="!imgUrl && !loading && !showGallery">
+            <div class="placeholder-icon">📷</div>
+            <div class="placeholder-text">No hay imagen capturada</div>
+          </div>
+          
+          <div class="gallery-container" *ngIf="showGallery">
+            <h4>Galería de Fotos</h4>
+            <div class="gallery-grid">
+              <div class="gallery-item" *ngFor="let photo of savedPhotos; let i = index" (click)="selectPhoto(photo)">
+                <img [src]="photo" alt="Foto guardada" class="gallery-image">
+                <div class="gallery-actions">
+                  <button type="button" class="delete-button" (click)="deletePhoto(i, $event)">🗑️</button>
+                </div>
+              </div>
+              <div *ngIf="savedPhotos.length === 0" class="empty-gallery">
+                No hay fotos guardadas
+              </div>
+            </div>
+            <button type="button" (click)="showGallery = false" class="gallery-back-button">Volver</button>
+          </div>
+          
+          <div class="camera-buttons" *ngIf="!showGallery">
+            <button type="button" (click)="takePictureFromCamera()" class="camera-action-button" [disabled]="loading">
+              <span *ngIf="!loading">📷 Tomar Foto</span>
+              <span *ngIf="loading"><span class="loading-spinner">⟳</span> Cargando...</span>
+            </button>
+            <button type="button" (click)="takePictureFromGallery()" class="camera-action-button" [disabled]="loading">
+              <span>🖼️ Elegir de Galería</span>
+            </button>
+            <button type="button" (click)="showGallery = true" class="camera-action-button">
+              <span>📁 Ver Galería</span>
+            </button>
+          </div>
+          
+          <div *ngIf="!imgUrl && formSubmitted" class="error-text">
+            Es necesario incluir una fotografía
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="submit-button" [disabled]="loading">
+          <span *ngIf="!loading">💾 Guardar Reporte</span>
+          <span *ngIf="loading"><span class="loading-spinner">⟳</span> Guardando...</span>
+        </button>
+        <button type="button" class="reset-button" (click)="resetForm()" [disabled]="loading">Cancelar</button>
+      </div>
+    </form>
+  </div>

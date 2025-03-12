@@ -1,0 +1,73 @@
+<div class="report-detail-container">
+  <div class="report-detail-header">
+    <button (click)="goBack()" class="back-button">
+      <i class="back-icon">←</i> Volver a la lista
+    </button>
+    <h2>Detalles del Reporte</h2>
+  </div>
+
+  <div *ngIf="loading" class="loading-indicator">
+    <span class="loading-spinner">⟳</span> Cargando información...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && report" class="report-detail-content">
+    <div class="report-status-bar">
+      <div class="report-id"># {{ report.id }}</div>
+      <div class="report-date">
+        <i class="calendar-icon">📅</i> {{ formatDate(report.date) }}
+      </div>
+      <div class="report-technician">
+        <i class="user-icon">👤</i> {{ report.technician }}
+      </div>
+      <div class="status-badge" [ngClass]="{'active': report.status === 'Activo', 'resolved': report.status === 'Resuelto', 'pending': report.status === 'Pendiente'}">
+        {{ report.status }}
+      </div>
+    </div>
+
+    <div class="report-image-container">
+      <img [src]="report.imageUrl" alt="Imagen del problema" class="report-image" onerror="this.src='assets/placeholder-image.png'">
+    </div>
+
+    <form [formGroup]="reportForm" class="report-form">
+      <div class="form-group">
+        <label for="equipmentId">ID del Equipo</label>
+        <input type="text" id="equipmentId" formControlName="equipmentId">
+        <div *ngIf="editMode && reportForm.get('equipmentId')?.invalid && reportForm.get('equipmentId')?.touched" class="error-text">
+          <span *ngIf="reportForm.get('equipmentId')?.errors?.['required']">El ID del equipo es obligatorio</span>
+          <span *ngIf="reportForm.get('equipmentId')?.errors?.['minlength']">El ID debe tener al menos 3 caracteres</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="problemDescription">Descripción del Problema</label>
+        <textarea id="problemDescription" formControlName="problemDescription" rows="4"></textarea>
+        <div *ngIf="editMode && reportForm.get('problemDescription')?.invalid && reportForm.get('problemDescription')?.touched" class="error-text">
+          <span *ngIf="reportForm.get('problemDescription')?.errors?.['required']">La descripción es obligatoria</span>
+          <span *ngIf="reportForm.get('problemDescription')?.errors?.['minlength']">La descripción debe tener al menos 10 caracteres</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Estado</label>
+        <select id="status" formControlName="status">
+          <option value="Activo">Activo</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Resuelto">Resuelto</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-edit" (click)="toggleEditMode()" *ngIf="!editMode">Editar</button>
+        <ng-container *ngIf="editMode">
+          <button type="button" class="btn-save" (click)="saveChanges()" [disabled]="reportForm.invalid">Guardar</button>
+          <button type="button" class="btn-cancel" (click)="toggleEditMode()">Cancelar</button>
+        </ng-container>
+        <button type="button" class="btn-delete" (click)="deleteReport()">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>

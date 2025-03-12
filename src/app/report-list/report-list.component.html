@@ -1,0 +1,64 @@
+<div class="report-list-container">
+    <h2>Visualizar Lista de Reportes</h2>
+    
+    <div class="intro-text">
+      <p>Como técnico, necesito ver todos los reportes creados de manera organizada:</p>
+    </div>
+    
+    <div *ngIf="loading" class="loading-indicator">
+      <span class="loading-spinner">⟳</span> Cargando reportes...
+    </div>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+    
+    <div *ngIf="!loading && reports.length === 0" class="no-reports">
+      <p>No hay reportes disponibles</p>
+    </div>
+    
+    <div *ngIf="reports.length > 0" class="reports-grid">
+      <div *ngFor="let report of reports" class="report-card">
+        <div class="report-info">
+          <div class="report-thumbnail">
+            <img [src]="report.imageUrl" alt="Imagen del reporte" onerror="this.src='assets/placeholder-image.png'">
+          </div>
+          
+          <div class="report-details">
+            <div class="report-metadata">
+              <span class="date-info">
+                <i class="calendar-icon">📅</i> {{ formatDate(report.date) }}
+              </span>
+              <span class="equipment-id">
+                <i class="equipment-icon">🔧</i> {{ report.id }}
+              </span>
+              <span class="technician">
+                <i class="user-icon">👤</i> {{ report.technician }}
+              </span>
+            </div>
+            
+            <div class="status-badge" [ngClass]="{'active': report.status === 'Activo', 'resolved': report.status === 'Resuelto', 'pending': report.status === 'Pendiente'}">
+              {{ report.status }}
+            </div>
+            
+            <p class="report-description">{{ report.problemDescription }}</p>
+          </div>
+        </div>
+        
+        <div class="report-actions">
+          <button (click)="viewDetails(report.id)" class="details-button">
+            <i class="details-icon">👁️</i> Ver Detalles
+          </button>
+          <button (click)="deleteReport(report.id, $event)" class="delete-button">
+            <i class="delete-icon">🗑️</i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="create-report-action">
+      <button (click)="createNewReport()" class="create-button">
+        <i class="add-icon">➕</i> Crear Nuevo Reporte
+      </button>
+    </div>
+  </div>
