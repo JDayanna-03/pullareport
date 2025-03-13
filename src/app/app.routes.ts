@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 export const routes: Routes = [
     { 
         path: '', 
-        redirectTo: 'create-report', 
+        redirectTo: 'reports', 
         pathMatch: 'full' 
       },
       { 
